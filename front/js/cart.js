@@ -1,9 +1,13 @@
-// Variables 'cart'
+// On récup le cart qui est dans sessionStorage pour le mettre dans une variable 'cart'
 let cart = JSON.parse (sessionStorage.getItem('cart'));
 console.log (cart);
+let totalQuantity = 0;
+let totalPrice = 0;
 // Foreach (tableaux) pour 'cart' (panier) + création du 'canap' en tant qu'"article" à mettre dans le 'cart'
-cart.forEach(canap =>{ console.log(canap)
-    // le doc.querySelect retourne le premier élément(=> cart__items) dans le doc qui correspond au selecteur. 
+cart.forEach(canap =>{ console.log(canap);
+  totalQuantity += canap.quantity;
+  totalPrice += canap.quantity * canap.price;
+    // le doc.querySelect retourne l'élément(=> cart__items) dans le doc qui correspond au selecteur. 
     document.querySelector('#cart__items').innerHTML+=
     // Avec .innerHTML on récupère ou définit la syntaxe HTML qui décrit les descendants de l'élément (ex:${canap.imageUrl}...)
     `
@@ -32,12 +36,55 @@ cart.forEach(canap =>{ console.log(canap)
   </article> 
 `}
 );
+document.querySelector ('#totalQuantity').innerHTML = totalQuantity;
+document.querySelector ('#totalPrice').innerHTML = totalPrice;
 // Function pour supp un canap 
 function deleteItem(id){
-  // filtre si canap x2
+  // filtre : ne garde que ce qui rep à la cond ap la flèche / 
     cart= cart.filter(canap => canap.id !== id) 
     console.log (cart)
+    // Mise à jour du session storage au niveau de la clé 'cart' (sessionStorage = même valeur que 'cart' sur nav)
     sessionStorage.setItem('cart', JSON.stringify(cart))
-    // après suppression la page se recharge automatiquement
+    // après suppression de canap la page se recharge automatiquement
     document.location.reload()
+}
+
+
+// ORDER 
+const orderButton = document.querySelector('#order');
+orderButton.addEventListener('click', order)
+async function order(e) {
+  e.preventDefault()
+const firstName = document.querySelector('#firstName').value;
+const lastName = document.querySelector('#lastName').value;
+const adress = document.querySelector('#address').value;
+const city = document.querySelector('#city').value;
+const email = document.querySelector('#email').value;
+const contact = {
+  firstName:firstName,
+  lastName:lastName,
+  address:address,
+  city:city,
+  email:email,
+ 
+}
+
+fetch("http://localhost:3000/api/products/order", {
+  method: "post",
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+
+  //make sure to serialize your JSON body
+  body:JSON.stringify({contact:contact,
+    products:["415b7cacb65d43b2b5c1ff70f3393ad1"]})
+})
+.then(response=> {
+  return response.json()
+})
+.then (data => {
+  console.log (data) 
+  window.location.href = "/front/html/confirmation.html?id="+data.orderId;
+})
 }
