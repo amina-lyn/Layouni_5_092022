@@ -32,16 +32,22 @@ function addProductToCart(){
     if(sessionStorage.getItem('cart')){
         cart = JSON.parse (sessionStorage.getItem('cart'))
     }
-    const cartItem = {
-        id: product._id,
-        name: product.name,
-        price: product.price,
-        imageUrl: product.imageUrl,
-        color: document.querySelector('#colors').value,
-        quantity: document.querySelector('#quantity').value,
-    }
-    cart.push(cartItem);
-sessionStorage.setItem('cart',JSON.stringify(cart));
+    const sameProduct = cart.find(canap => canap.id === product._id + document.querySelector('#colors').value)
+    if(sameProduct){
+        sameProduct.quantity += parseInt(document.querySelector('#quantity').value)
+        }else { 
+            cart.push({
+                product_id: product._id,
+                id:product._id + document.querySelector('#colors').value,
+                name: product.name,
+                price: product.price,
+                imageUrl: product.imageUrl,
+                color: document.querySelector('#colors').value,
+                quantity: parseInt(document.querySelector('#quantity').value),
+            });
+        }
+   
+    sessionStorage.setItem('cart',JSON.stringify(cart));
     console.log(sessionStorage.getItem('cart'));
 
 }
