@@ -1,6 +1,8 @@
+//création de constantes pour :
 const baseUrl = "http://localhost:3000/api/";
 const endPoint = 'products';
 const url = baseUrl + endPoint;
+//tableaux pour les produits
 fetch(url)
 .then(response => response.text())
 .then(text => {

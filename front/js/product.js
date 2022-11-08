@@ -12,6 +12,8 @@
     document.querySelector('#title').innerHTML=kanap.name;
     document.querySelector('#price').innerHTML=kanap.price;
     document.querySelector('#description').innerHTML=kanap.description;
+    document.querySelector('.item__img').innerHTML=`<img src="${kanap.imageUrl}" alt="Photographie d'un canapé"></img>`;
+    
     kanap.colors.forEach(color => {
         document.querySelector('#colors').innerHTML+='<option value="'+color+'">'+color+'</option>';
     });
