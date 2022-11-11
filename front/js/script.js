@@ -1,13 +1,16 @@
 //création de constantes pour :
 const baseUrl = "http://localhost:3000/api/";
 const endPoint = 'products';
-const url = baseUrl + endPoint;
+const url = baseUrl + endPoint; 
 //tableaux pour les produits
-fetch(url)
+fetch(url, {
+  method : 'GET' 
+})
 .then(response => response.text())
 .then(text => {
-    const data = JSON.parse(text)
+    const data = JSON.parse(text) // analyse le texte de la chaîne comme JSON.
     let codeHTML =''
+    // i++ = opérateur postfixé donc (i++)=0 et (i)= 1 
     for (let i = 0; i<data.length; i++) {
         const kanap = data[i];
         codeHTML += `

@@ -1,10 +1,10 @@
-// On récup le cart qui est dans sessionStorage pour le mettre dans une variable 'cart'
+// On récup le cart(panier) qui est dans sessionStorage pour le mettre dans une variable 'cart'
 let cart = JSON.parse (sessionStorage.getItem('cart'));
 console.log (cart);
 let totalQuantity = 0;
 let totalPrice = 0;
 
-// Foreach (tableaux) pour 'cart' (panier) + création du 'canap' en tant qu'"article" à mettre dans le 'cart'
+// Foreach (tableaux) pour 'cart'(panier) + création du 'canap' en tant qu'"article" à mettre dans le 'cart'
 cart.forEach(canap =>{ console.log(canap);
   totalQuantity += canap.quantity;
   totalPrice += canap.quantity * canap.price;
@@ -41,9 +41,10 @@ cart.forEach(canap =>{ console.log(canap);
 document.querySelector ('#totalQuantity').innerHTML = totalQuantity;
 document.querySelector ('#totalPrice').innerHTML = totalPrice;
 document.querySelectorAll ('.itemQuantity').forEach(element => {
+  // // le addEventList = attache une fonction &/ou évenement à appeler = ex: ici dès qu'on change la qté d'un canap le total en bas est appelé à changé aussi.
   element.addEventListener('change',addQuantityToTotalPrice)
 })
-// Function pour supp un canap 
+// Fonction pour supp un canap 
 function deleteItem(id){
   // filtre : ne garde que ce qui rep à la cond ap la flèche / 
     cart= cart.filter(canap => canap.id !== id) 
@@ -53,47 +54,85 @@ function deleteItem(id){
     // après suppression de canap la page se recharge automatiquement avec mise à jour du panier
     document.location.reload()
 }
-//--------- Si on ajoute +1 canap à la 'canap.quantity' , alors mise à jour du totalPrice & totalQuantity ---------
 
 // fonction pour mise à jour du panier total à l'ajout d'un canap
-
-function addQuantityToTotalPrice(event){
+function addQuantityToTotalPrice(event){ // event = évenement dans le DOM
   console.log (event)
-  const canap = cart.find(product => product.id === event.target.id);
+  const canap = cart.find(product => product.id === event.target.id); // ".find"= recherche page
   canap.quantity =parseInt(event.target.value); 
   console.log (cart) 
   sessionStorage.setItem('cart', JSON.stringify(cart))
   document.location.reload()
-
 }
 
 // ------------ ORDER ------------ 
 //
 const orderButton = document.querySelector('#order');
+// évènement de 'click' sur le orderButton(commander)
 orderButton.addEventListener('click', order);
+//async function = fonction qui peut contenir un mot clé (ex:await.asyn) qui permet d'avoir un comportement asynchrone, basé sur une promesse. 
 async function order(e) {
-  e.preventDefault()
+    e.preventDefault() // annule le comportement par default de l'évènement (le reload de la page)
 const firstName = document.querySelector('#firstName').value;
 const lastName = document.querySelector('#lastName').value;
 const address = document.querySelector('#address').value;
 const city = document.querySelector('#city').value;
 const email = document.querySelector('#email').value;
+//validation des champs du formulaire
+
+// le regex fonctionne si la chaine de carac contient des carac de A à Z et les caratères spéciaux 
+const regexName = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u
+if (!regexName.test(firstName)){
+  document.querySelector("#firstNameErrorMsg").innerHTML="veuillez renseigner un prénom"
+  return -1 
+}
+// pour passer au msg d'après
+document.querySelector("#firstNameErrorMsg").innerHTML=""
+
+if (!regexName.test(lastName)){
+  document.querySelector("#lastNameErrorMsg").innerHTML="veuillez renseigner un nom"
+  return -1 
+}
+document.querySelector("#lastNameErrorMsg").innerHTML=""
+
+if (!regexName.test(city)){
+  document.querySelector("#cityErrorMsg").innerHTML= "veuillez renseigner un nom de ville"
+  return -1 
+}
+document.querySelector("#cityErrorMsg").innerHTML= ""
+
+const regexAddress = /^[a-zA-Z0-9\s,'-]*$/u
+if (!regexAddress.test(address)){
+  document.querySelector("#addressErrorMsg").innerHTML="veuillez renseigner une adresse"
+  return -1 
+}
+document.querySelector("#addressErrorMsg").innerHTML=""
+
+const regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+if (!regexEmail.test(email)){
+  document.querySelector("#emailErrorMsg").innerHTML="veuillez renseigner un email"
+  return -1 
+}
+document.querySelector("#emailErrorMsg").innerHTML=""
+
 const contact = {
+  // id    : name
   firstName:firstName,
   lastName:lastName,
   address:address,
   city:city,
   email:email,
 }
-
+//La méthode fetch() renvoie une promesse (un objet de type Promise ) qui va se résoudre avec un objet "Response" . la promesse va être résolue dès que le serveur renvoie les en-têtes HTTP, c-à-d avant même qu'on ait le corps de la réponse.
 fetch("http://localhost:3000/api/products/order", {
-  method: "post",
-  headers: {
-    'Accept': 'application/json',
+  method: "POST", // envoi données au serveur
+  headers: { //création de nos propres objects d'en-têtes(=ensemble de +sieurs clés) via 'headers' 
+    'Accept': 'application/json', 
     'Content-Type': 'application/json'
   },
 
   //make sure to serialize your JSON body
+  //JSON.stringify = convertit valeur JavaScript => chaîne JSON. Peut remplacer des valeurs ou spécifier les propriétés à inclure si un tableau de propriétés a été fourni.
   body:JSON.stringify({contact:contact,
     products:["415b7cacb65d43b2b5c1ff70f3393ad1"]})
 })
