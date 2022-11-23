@@ -52,7 +52,7 @@ function deleteItem(id){
     // Mise à jour du session storage au niveau de la clé 'cart' (sessionStorage = même valeur que 'cart' sur nav)
     sessionStorage.setItem('cart', JSON.stringify(cart))
     // après suppression de canap la page se recharge automatiquement avec mise à jour du panier
-    document.location.reload()
+    
 }
 
 // fonction pour mise à jour du panier total à l'ajout d'un canap
@@ -62,7 +62,7 @@ function addQuantityToTotalPrice(event){ // event = évenement dans le DOM
   canap.quantity =parseInt(event.target.value); 
   console.log (cart) 
   sessionStorage.setItem('cart', JSON.stringify(cart))
-  document.location.reload()
+  
 }
 
 // ------------ ORDER ------------ 

@@ -8,7 +8,7 @@ fetch(url, {
 })
 .then(response => response.text())
 .then(text => {
-    const data = JSON.parse(text) // analyse le texte de la chaîne comme JSON.
+    const data = JSON.parse(text) // analyse le texte de la chaîne comme du JSON.
     let codeHTML =''
     // i++ = opérateur postfixé donc (i++)=0 et (i)= 1 
     for (let i = 0; i<data.length; i++) {

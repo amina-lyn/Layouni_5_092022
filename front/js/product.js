@@ -46,7 +46,7 @@ function addProductToCart(){
                 product_id: product._id,
                 id:product._id + document.querySelector('#colors').value,
                 name: product.name,
-                price: product.price,
+                
                 imageUrl: product.imageUrl,
                 color: document.querySelector('#colors').value,
                 quantity: parseInt(document.querySelector('#quantity').value),
