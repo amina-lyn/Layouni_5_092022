@@ -1,4 +1,4 @@
- const pageUrl = document.location.href;
+const pageUrl = document.location.href;
  const id = (pageUrl.split `id=`[1]);
  const baseUrl = "http://localhost:3000/api/";
  const endPoint = 'products';
@@ -34,8 +34,8 @@ function addProductToCart(){
         return -1 //met fin à l'exécution d'une fonction et définit une valeur à renvoyer à la fonction appelante.
     }
     let cart = []
-    if(sessionStorage.getItem('cart')){
-        cart = JSON.parse (sessionStorage.getItem('cart'))
+    if(localStorage.getItem('cart')){
+        cart = JSON.parse (localStorage.getItem('cart'))
     }
     const sameProduct = cart.find(canap => canap.id === product._id + document.querySelector('#colors').value)
     if(sameProduct){
@@ -52,8 +52,11 @@ function addProductToCart(){
                 quantity: parseInt(document.querySelector('#quantity').value),
             });
         }
+    
     //JSON.stringify = convertit valeur JavaScript => chaîne JSON. Peut remplacer des valeurs ou spécifier les propriétés à inclure si un tableau de propriétés a été fourni.
-    sessionStorage.setItem('cart',JSON.stringify(cart));
-    console.log(sessionStorage.getItem('cart'));
+    localStorage.setItem('cart',JSON.stringify(cart));
+    // alert d'ajout d'un kanap
+    alert(product.name + " a été ajouté dans le panier.")
+    console.log(localStorage.getItem('cart'));
 
 }
