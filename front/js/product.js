@@ -18,7 +18,7 @@ const pageUrl = document.location.href;
     document.querySelector('.item__img').innerHTML=`<img src="${kanap.imageUrl}" alt="Photographie d'un canapé"></img>`;
 
     kanap.colors.forEach(color => {
-        document.querySelector('#colors').innerHTML+='<option value="'+color+'">'+color+'</option>';
+        document.querySelector('#colors').innerHTML+=`<option value="${color}">${color}</option>`; 
     });
     product = kanap;
     document.querySelector('#addToCart').addEventListener('click',addProductToCart);
@@ -46,7 +46,6 @@ function addProductToCart(){
                 product_id: product._id,
                 id:product._id + document.querySelector('#colors').value,
                 name: product.name,
-                
                 imageUrl: product.imageUrl,
                 color: document.querySelector('#colors').value,
                 quantity: parseInt(document.querySelector('#quantity').value),

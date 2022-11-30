@@ -65,13 +65,19 @@ cart.forEach((canap) => {
  
 });
 // Fonction pour supp un canap
-function deleteItem(id) {
+function deleteItem(id)    {
+  console.log(window.event.target);
+  const myButton = window.event.target;
+  const article = myButton.closest("article");
+  console.log(article);
+  document.querySelector("#cart__items").removeChild(article);
   // filtre : ne garde que ce qui rep à la cond ap la flèche /
   cart = cart.filter((canap) => canap.id !== id);
   console.log(cart);
-  // Mise à jour du session storage au niveau de la clé 'cart' (localStorage = même valeur que 'cart' sur nav)
+  // Mise à jour du localstorage au niveau de la clé 'cart' (localStorage = même valeur que 'cart' sur nav)
   localStorage.setItem("cart", JSON.stringify(cart));
   // après suppression de canap la page se recharge automatiquement avec mise à jour du panier
+  reloadTotalPrice()
 }
 
 // fonction pour mise à jour du panier total à l'ajout d'un canap
@@ -84,30 +90,7 @@ function addQuantityToTotalPrice(event) {
   localStorage.setItem("cart", JSON.stringify(cart));
 
   // mise à jour du prix total
-  totalQuantity = 0;
-  totalPrice = 0;
-  cart.forEach((canap) => {
-
-    //récupérer le prix du kanap
-    const baseUrl = "http://localhost:3000/api/";
-    const endPoint = 'products';
-    const url = baseUrl + endPoint + `/`+ canap.product_id ;
-    //La méthode fetch() renvoie une promesse (un objet de type Promise ) qui va se résoudre avec un objet "Response" . la promesse va être résolue dès que le serveur renvoie les en-têtes HTTP, c-à-d avant même qu'on ait le corps de la réponse.
-    fetch(url, {
-       method : 'GET'
-    })
-   .then(response => response.text())
-   .then(text => {
-       const kanap = JSON.parse(text);
-       canap.price = kanap.price
-       totalQuantity += canap.quantity;
-       totalPrice += canap.quantity * canap.price;
-      document.querySelector("#totalQuantity").innerHTML = totalQuantity;
-      document.querySelector("#totalPrice").innerHTML = totalPrice;
-
-   });
-   
-  });
+  reloadTotalPrice();
 }
 
 // ------------ ORDER ------------
@@ -115,6 +98,39 @@ function addQuantityToTotalPrice(event) {
 const orderButton = document.querySelector("#order");
 // évènement de 'click' sur le orderButton(commander)
 orderButton.addEventListener("click", order);
+
+
+function reloadTotalPrice() {
+  totalQuantity = 0;
+  totalPrice = 0;
+  if(cart.length === 0){
+    document.querySelector("#totalQuantity").innerHTML = totalQuantity;
+    document.querySelector("#totalPrice").innerHTML = totalPrice;
+  }
+  cart.forEach((canap) => {
+
+    //récupérer le prix du kanap
+    const baseUrl = "http://localhost:3000/api/";
+    const endPoint = 'products';
+    const url = baseUrl + endPoint + `/` + canap.product_id;
+    //La méthode fetch() renvoie une promesse (un objet de type Promise ) qui va se résoudre avec un objet "Response" . la promesse va être résolue dès que le serveur renvoie les en-têtes HTTP, c-à-d avant même qu'on ait le corps de la réponse.
+    fetch(url, {
+      method: 'GET'
+    })
+      .then(response => response.text())
+      .then(text => {
+        const kanap = JSON.parse(text);
+        canap.price = kanap.price;
+        totalQuantity += canap.quantity;
+        totalPrice += canap.quantity * canap.price;
+        document.querySelector("#totalQuantity").innerHTML = totalQuantity;
+        document.querySelector("#totalPrice").innerHTML = totalPrice;
+
+      });
+
+  });
+}
+
 //async function = fonction qui peut contenir un mot clé (ex:await.asyn) qui permet d'avoir un comportement asynchrone, basé sur une promesse.
 async function order(e) {
   e.preventDefault(); // annule le comportement par default de l'évènement (le reload de la page)
